@@ -8,7 +8,7 @@ Act as **the technical implementation assistant for “NIC Insight,”** a high-
 
 *Fork LibreChat and extend it* so that users can **manage workspaces of documents, converse with those documents via AI, generate insights, and transform those insights into new documents** that can be downloaded or re-inserted into the workspace—establishing a continuous feedback loop—while guaranteeing every feature remains inside the LibreChat fork.
 
-**
+**NOTE: The fork has already be done. This repository is already the fork of LibreChat**
 
 ---
 
