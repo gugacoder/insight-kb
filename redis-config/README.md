@@ -229,7 +229,7 @@ npm run backend
 # Look for these success indicators in logs:
 # ✅ "No changes needed for 'USER' role permissions"
 # ✅ "No changes needed for 'ADMIN' role permissions"
-# ✅ "Server listening at http://localhost:3080"
+# ✅ "Server listening at http://localhost:8000"
 # ✅ No "IoRedis connection error" messages
 ```
 

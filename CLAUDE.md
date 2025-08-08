@@ -16,7 +16,7 @@ npm install
 
 # Start development servers
 npm run frontend:dev   # Frontend on http://localhost:5173
-npm run backend:dev    # Backend on http://localhost:3080
+npm run backend:dev    # Backend on http://localhost:8000
 
 # Build for production
 npm run frontend       # Build frontend

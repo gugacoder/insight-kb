@@ -140,7 +140,7 @@ securityContext:
 
 service:
   type: ClusterIP
-  port: 3080
+  port: 8000
   annotations: {}
 
 ingress:

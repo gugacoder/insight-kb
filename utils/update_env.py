@@ -16,7 +16,7 @@ Usage:
    API_KEY=GET_FROM_LOCAL_ENV
    DB_PASSWORD=GET_FROM_LOCAL_ENV
    HOST=localhost
-   PORT=3080
+   PORT=8000
 
 2. Set the corresponding environment variables in your local environment.
    Example in bash:

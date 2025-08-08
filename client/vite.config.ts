@@ -10,15 +10,15 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig(({ command }) => ({
   server: {
     host: 'localhost',
-    port: 3090,
+    port: 3000,
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3080',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
       '/oauth': {
-        target: 'http://localhost:3080',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
     },
