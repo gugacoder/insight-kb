@@ -214,7 +214,6 @@ Message:
   - children: [String]
   - files: [Mixed]
   - searchResult: Boolean (default: false)
-  - finish_reason: String
   - createdAt: Date
   - updatedAt: Date
   relations:
@@ -542,3 +541,109 @@ Agent:
   relations:
     - belongsTo: User
     - hasMany: File
+Assistant:
+  - assistant_id: String (unique, required)
+  - user: ObjectId (ref User, required)
+  - name: String (required)
+  - description: String
+  - instructions: String (required)
+  - model: String (required)
+  - tools: [Mixed]
+  - metadata: Mixed
+  - createdAt: Date
+  - updatedAt: Date
+  relations:
+    - belongsTo: User
+    - hasMany: File
+
+
+### Public Interfaces
+```yaml
+- createAgent:
+    purpose: Create new AI agent with custom instructions
+    accepts: agentData (object), userId (string)
+    returns: Agent object
+
+- initializeAssistant:
+    purpose: Set up OpenAI-style assistant with tools
+    accepts: assistantConfig (object), userId (string)
+    returns: Assistant object
+
+- executeAgentTask:
+    purpose: Run agent with tools and context
+    accepts: agentId (string), task (string), context (object)
+    returns: execution result
+
+- manageAgentTools:
+    purpose: Configure available tools for agent
+    accepts: agentId (string), tools (array)
+    returns: updated agent configuration
+```
+
+### Business Rules
+```yaml
+- Agents are user-specific and cannot be shared between users
+- Each agent must have a specified model and provider
+- Tool access controlled by user permissions and API quotas
+- Agent instructions can include system prompts and examples
+- Assistants follow OpenAI API standards for compatibility
+- File attachments processed according to agent capabilities
+- Agent conversations logged for debugging and improvement
+```
+
+### External Dependencies
+```yaml
+- @librechat/agents: ^2.4.72 (agent execution framework)
+- @langchain/core: ^0.3.62 (LangChain core utilities)
+- @langchain/community: ^0.3.47 (community tools)
+```
+
+
+---
+
+## System-Wide Configuration
+
+### Environment Requirements
+```yaml
+- runtime: Node.js 20+
+- database: MongoDB 6.0+
+- cache: Redis 7+ (optional)
+- search: MeiliSearch 1.5+ (optional)
+- storage: Local filesystem, S3, Azure, or Firebase
+```
+
+### Global Business Rules
+```yaml
+- All API responses include request correlation IDs
+- Rate limiting enforced per user and endpoint
+- File uploads limited by user tier (free: 20MB, pro: 100MB)
+- Conversations auto-expire after 30 days for free users
+- Search indexing updates within 5 seconds of content changes
+- Token usage tracked for billing and quota enforcement
+- All user data isolated by userId for multi-tenancy
+- CORS enabled for specified frontend domains only
+```
+
+### Integration Points
+```yaml
+Authentication → Conversations:
+  - interface: validateUserAccess
+  - contract: Provides user context for conversation ownership
+
+Files → Messages:
+  - interface: attachFilesToMessage
+  - contract: Links file references to message content
+
+Agents → AI Models:
+  - interface: createLLMClient
+  - contract: Configures model access with agent parameters
+
+Search → Conversations:
+  - interface: indexConversationContent  
+  - contract: Enables full-text search across user messages
+
+Frontend → Backend:
+  - interface: React Query + REST APIs
+  - contract: Type-safe data fetching with optimistic updates
+```
+
