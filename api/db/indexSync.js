@@ -35,11 +35,22 @@ class MeiliSearchClient {
  * Performs the actual sync operations for messages and conversations
  */
 async function performSync() {
-  const client = MeiliSearchClient.getInstance();
+  let client;
+  try {
+    client = MeiliSearchClient.getInstance();
+  } catch (err) {
+    logger.error('[performSync] Failed to get MeiliSearch client instance', err);
+    throw err;
+  }
 
-  const { status } = await client.health();
-  if (status !== 'available') {
-    throw new Error('Meilisearch not available');
+  try {
+    const { status } = await client.health();
+    if (status !== 'available') {
+      throw new Error('Meilisearch not available');
+    }
+  } catch (err) {
+    logger.error('[performSync] Health check failed', err);
+    throw err;
   }
 
   if (indexingDisabled === true) {
@@ -51,25 +62,48 @@ async function performSync() {
   let convosSync = false;
 
   // Check if we need to sync messages
-  const messageProgress = await Message.getSyncProgress();
+  let messageProgress;
+  try {
+    messageProgress = await Message.getSyncProgress();
+  } catch (err) {
+    logger.error('[performSync] Failed to get message sync progress', err);
+    throw err;
+  }
+  
   if (!messageProgress.isComplete) {
     logger.info(
       `[indexSync] Messages need syncing: ${messageProgress.totalProcessed}/${messageProgress.totalDocuments} indexed`,
     );
 
     // Check if we should do a full sync or incremental
-    const messageCount = await Message.countDocuments();
+    let messageCount;
+    try {
+      messageCount = await Message.countDocuments();
+    } catch (err) {
+      logger.error('[performSync] Failed to count messages', err);
+      throw err;
+    }
     const messagesIndexed = messageProgress.totalProcessed;
     const syncThreshold = parseInt(process.env.MEILI_SYNC_THRESHOLD || '1000', 10);
 
     if (messageCount - messagesIndexed > syncThreshold) {
       logger.info('[indexSync] Starting full message sync due to large difference');
-      await Message.syncWithMeili();
-      messagesSync = true;
+      try {
+        await Message.syncWithMeili();
+        messagesSync = true;
+      } catch (err) {
+        logger.error('[indexSync] Failed to sync messages', err);
+        throw err;
+      }
     } else if (messageCount !== messagesIndexed) {
       logger.warn('[indexSync] Messages out of sync, performing incremental sync');
-      await Message.syncWithMeili();
-      messagesSync = true;
+      try {
+        await Message.syncWithMeili();
+        messagesSync = true;
+      } catch (err) {
+        logger.error('[indexSync] Failed to sync messages incrementally', err);
+        throw err;
+      }
     }
   } else {
     logger.info(
@@ -78,24 +112,47 @@ async function performSync() {
   }
 
   // Check if we need to sync conversations
-  const convoProgress = await Conversation.getSyncProgress();
+  let convoProgress;
+  try {
+    convoProgress = await Conversation.getSyncProgress();
+  } catch (err) {
+    logger.error('[performSync] Failed to get conversation sync progress', err);
+    throw err;
+  }
+  
   if (!convoProgress.isComplete) {
     logger.info(
       `[indexSync] Conversations need syncing: ${convoProgress.totalProcessed}/${convoProgress.totalDocuments} indexed`,
     );
 
-    const convoCount = await Conversation.countDocuments();
+    let convoCount;
+    try {
+      convoCount = await Conversation.countDocuments();
+    } catch (err) {
+      logger.error('[performSync] Failed to count conversations', err);
+      throw err;
+    }
     const convosIndexed = convoProgress.totalProcessed;
     const syncThreshold = parseInt(process.env.MEILI_SYNC_THRESHOLD || '1000', 10);
 
     if (convoCount - convosIndexed > syncThreshold) {
       logger.info('[indexSync] Starting full conversation sync due to large difference');
-      await Conversation.syncWithMeili();
-      convosSync = true;
+      try {
+        await Conversation.syncWithMeili();
+        convosSync = true;
+      } catch (err) {
+        logger.error('[indexSync] Failed to sync conversations', err);
+        throw err;
+      }
     } else if (convoCount !== convosIndexed) {
       logger.warn('[indexSync] Convos out of sync, performing incremental sync');
-      await Conversation.syncWithMeili();
-      convosSync = true;
+      try {
+        await Conversation.syncWithMeili();
+        convosSync = true;
+      } catch (err) {
+        logger.error('[indexSync] Failed to sync conversations incrementally', err);
+        throw err;
+      }
     }
   } else {
     logger.info(
@@ -160,6 +217,7 @@ async function indexSync() {
       }, 750);
     } else if (err.message.includes('Meilisearch not configured')) {
       logger.info('[indexSync] Meilisearch not configured, search will be disabled.');
+      logger.debug('[indexSync] Configuration error details:', err);
     } else {
       logger.error('[indexSync] error', err);
     }

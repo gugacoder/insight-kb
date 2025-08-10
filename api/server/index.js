@@ -27,7 +27,7 @@ const { PORT, HOST, ALLOW_SOCIAL_LOGIN, DISABLE_COMPRESSION, TRUST_PROXY } = pro
 
 // Allow PORT=0 to be used for automatic free port assignment
 const port = isNaN(Number(PORT)) ? 8000 : Number(PORT);
-const host = HOST || 'localhost';
+const host = HOST || '0.0.0.0';
 const trusted_proxy = Number(TRUST_PROXY) || 1; /* trust first proxy by default */
 
 const app = express();
@@ -58,7 +58,14 @@ const startServer = async () => {
   app.use(express.json({ limit: '3mb' }));
   app.use(express.urlencoded({ extended: true, limit: '3mb' }));
   app.use(mongoSanitize());
-  app.use(cors());
+  app.use(cors({
+    origin: [
+      'http://localhost:3000',
+      'https://code.codrstudio.dev',
+      'http://code.codrstudio.dev'
+    ],
+    credentials: true
+  }));
   app.use(cookieParser());
 
   if (!isEnabled(DISABLE_COMPRESSION)) {

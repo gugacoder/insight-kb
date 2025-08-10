@@ -73,8 +73,21 @@ const consoleFormat = winston.format.combine(
   redactFormat(),
   winston.format.colorize({ all: true }),
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.errors({ stack: true }),
   winston.format.printf((info) => {
-    const message = `${info.timestamp} ${info.level}: ${info.message}`;
+    let message = `${info.timestamp} ${info.level}: ${info.message}`;
+    
+    // If there's a stack trace, append it
+    if (info.stack) {
+      message += `\n${info.stack}`;
+    }
+    
+    // If there are additional properties, append them
+    const { timestamp, level, message: msg, stack, ...rest } = info;
+    if (Object.keys(rest).length > 0) {
+      message += `\n${JSON.stringify(rest, null, 2)}`;
+    }
+    
     return info.level.includes('error') ? redactMessage(message) : message;
   }),
 );
