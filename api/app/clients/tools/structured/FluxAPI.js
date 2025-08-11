@@ -160,7 +160,7 @@ class FluxAPI extends Tool {
   }
 
   wrapInMarkdown(imageUrl) {
-    const serverDomain = process.env.DOMAIN_SERVER || 'http://localhost:3080';
+    const serverDomain = process.env.DOMAIN_SERVER || 'http://localhost:8000';
     return `![generated image](${serverDomain}${imageUrl})`;
   }
 

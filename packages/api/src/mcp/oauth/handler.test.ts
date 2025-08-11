@@ -25,7 +25,7 @@ describe('MCPOAuthHandler - Configurable OAuth Metadata', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.DOMAIN_SERVER = 'http://localhost:3080';
+    process.env.DOMAIN_SERVER = 'http://localhost:8000';
 
     // Mock startAuthorization to return a successful response
     mockStartAuthorization.mockResolvedValue({
