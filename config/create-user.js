@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const mongoose = require(path.resolve(__dirname, '..', 'api', 'node_modules', 'mongoose'));
 const { User } = require('@librechat/data-schemas').createModels(mongoose);
