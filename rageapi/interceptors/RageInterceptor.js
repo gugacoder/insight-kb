@@ -16,6 +16,9 @@ const { TokenOptimizer } = require('../enrichment/tokenOptimizer');
  */
 class RageInterceptor {
   constructor(config = {}) {
+    // Initialize error handler property first (outside try-catch)
+    this._errorHandler = null;
+    
     try {
       // Initialize configuration management
       if (!configManager.isInitialized) {
@@ -58,9 +61,6 @@ class RageInterceptor {
       bufferTokens: this.config.RAGE_TOKEN_BUFFER
     });
     
-    // Error handler will be lazily initialized when needed
-    this._errorHandler = null;
-    
     if (this.config.RAGE_ENABLED) {
       rageLogger.info('RAGE Interceptor initialized successfully', {
         orgId: this.config.RAGE_VECTORIZE_ORGANIZATION_ID,
@@ -84,6 +84,8 @@ class RageInterceptor {
       this.contextFormatter = null;
       this.relevanceScorer = null;
       this.tokenOptimizer = null;
+      // Ensure _errorHandler is defined even in error case
+      this._errorHandler = null;
     }
   }
 
