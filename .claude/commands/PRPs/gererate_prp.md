@@ -188,6 +188,42 @@ Performance planning establishes **MEASURABLE PERFORMANCE BUDGETS** for each fea
 **Security and Performance Impact Assessment** confirms that individual feature implementations support overall system security posture and performance requirements.
 **END THINK HARDER**
 
+## Quality Assessment
+
+After generating all Features, evaluate:
+
+**Autonomous Execution Check:**
+Ask yourself: "Can execute-prp implement these Features WITHOUT human intervention?"
+
+**Confidence Score: [1-10]**
+
+Rate the likelihood of successful autonomous implementation based on:
+- Completeness of specifications in each Feature
+- Clarity of requirements and constraints
+- All technical decisions documented (no ambiguity)
+- Dependencies and libraries clearly specified
+- Error handling strategies defined
+- Validation criteria executable
+
+**If score < 7:**
+Warning: "Low confidence for autonomous execution (X/10). Issues:
+- [Specific ambiguities or missing context]
+- [Technical decisions not resolved]
+- [Missing implementation details]
+
+Revise Features to include missing context before proceeding."
+
+**Report to user:**
+```
+Generated: X Features
+Examples created: Y Patterns, Z Code templates
+Modules documented: [list from BLUEPRINT.md]
+Autonomous execution confidence: N/10
+Reason: [Why this score - what might fail?]
+```
+
+**Insert this report at the top oi the TASKS.md as an info section**
+
 ---
 
 **BEGIN ANALYSIS** by requesting the application prompt for comprehensive decomposition and PRP generation.
