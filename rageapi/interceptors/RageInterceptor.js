@@ -61,6 +61,9 @@ class RageInterceptor {
       bufferTokens: this.config.RAGE_TOKEN_BUFFER
     });
     
+    // Initialize ErrorHandler eagerly (fixes timing issue)
+    this.errorHandler = new ErrorHandler();
+    
     if (this.config.RAGE_ENABLED) {
       rageLogger.info('RAGE Interceptor initialized successfully', {
         orgId: this.config.RAGE_VECTORIZE_ORGANIZATION_ID,
@@ -84,21 +87,10 @@ class RageInterceptor {
       this.contextFormatter = null;
       this.relevanceScorer = null;
       this.tokenOptimizer = null;
-      // Ensure _errorHandler is defined even in error case
-      this._errorHandler = null;
+      this.errorHandler = null;
     }
   }
 
-  /**
-   * Lazy-loaded error handler getter
-   * @returns {ErrorHandler} Error handler instance
-   */
-  get errorHandler() {
-    if (!this._errorHandler) {
-      this._errorHandler = new ErrorHandler();
-    }
-    return this._errorHandler;
-  }
 
   /**
    * Validates that RAGE is properly configured
