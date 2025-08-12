@@ -57,7 +57,7 @@ Execute tasks in the order they appear in TASKS.md following this protocol for e
 ```
 
 **Execution Process:**
-1. Read the AI prompt from `./claude/commands/PRPs/execute_prp.md`
+1. Read the AI prompt from `./.claude/commands/PRPs/execute_prp.md`
 2. Execute that prompt as AI instructions (**NOT** as a command-line tool)
 3. Pass the PRP name as PROMPT parameter to the AI prompt execution
 4. The AI prompt will handle reading `./PRPs/{prp-name}.md` and implementing the feature
@@ -85,7 +85,7 @@ Execute tasks in the order they appear in TASKS.md following this protocol for e
 
 **Upon successful task completion, immediately commit changes:**
 - If auto-commit is activated, proceed with a git commit after each completed task
-- Read and execute the git commit prompt from `./claude/commands/git-commit.md`
+- Read and execute the git commit prompt from `./.claude/commands/git-commit.md`
 - Use descriptive commit message following the format: `feat: complete [task-name] - [brief description]`
 - This ensures incremental progress is saved and traceable
 
@@ -147,14 +147,14 @@ Execute tasks in the order they appear in TASKS.md following this protocol for e
 * [-] Implement user authentication (PRP: user-authentication)
 ```
 
-**Read the execute_prp.md prompt** by loading content from `./claude/commands/PRPs/execute_prp.md`. This file contains AI instructions, **NOT** shell commands.
+**Read the execute_prp.md prompt** by loading content from `./.claude/commands/PRPs/execute_prp.md`. This file contains AI instructions, **NOT** shell commands.
 
 **Execute as AI prompt** by treating the execute_prp.md content as instructions to yourself, setting PROMPT parameter to the PRP name (e.g., "user-authentication"), and following all instructions in execute_prp.md as an AI agent. The prompt will guide you to read `./PRPs/{prp-name}.md` and implement the feature.
 
 ### Critical Guidelines
 
 **DO NOT:**
-- Execute as shell command: `./claude/commands/PRPs/execute_prp.md user-authentication` ❌
+- Execute as shell command: `./.claude/commands/PRPs/execute_prp.md user-authentication` ❌
 - Treat as command-line tool ❌
 - Look for executable files ❌
 
