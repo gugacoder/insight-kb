@@ -1,0 +1,235 @@
+{
+  "successfulRetrieval": {
+    "results": [
+      {
+        "text": "Our company policy states that all employees must follow safety protocols when working in laboratory environments. This includes wearing appropriate personal protective equipment (PPE) such as safety goggles, lab coats, and gloves.",
+        "score": 0.89,
+        "metadata": {
+          "source": "safety-manual.pdf",
+          "section": "Laboratory Safety",
+          "page": 12,
+          "updated": "2024-01-15"
+        }
+      },
+      {
+        "text": "Remote work policies allow employees to work from home up to 3 days per week with manager approval. All remote workers must maintain secure VPN connections and follow cybersecurity guidelines.",
+        "score": 0.82,
+        "metadata": {
+          "source": "hr-handbook.pdf",
+          "section": "Remote Work",
+          "page": 45,
+          "updated": "2024-02-01"
+        }
+      },
+      {
+        "text": "The annual performance review process begins in January and concludes by March. Employees will receive feedback from supervisors and peers, with ratings based on goal achievement and core competencies.",
+        "score": 0.78,
+        "metadata": {
+          "source": "performance-guide.pdf",
+          "section": "Review Process",
+          "page": 8,
+          "updated": "2023-12-10"
+        }
+      }
+    ]
+  },
+  "emptyResults": {
+    "results": []
+  },
+  "lowRelevanceResults": {
+    "results": [
+      {
+        "text": "This document contains information that is not very relevant to the query.",
+        "score": 0.45,
+        "metadata": {
+          "source": "irrelevant-doc.pdf",
+          "section": "Miscellaneous",
+          "page": 1
+        }
+      }
+    ]
+  },
+  "mixedRelevanceResults": {
+    "results": [
+      {
+        "text": "Highly relevant information about company policies and procedures that directly answers the user's question.",
+        "score": 0.92,
+        "metadata": {
+          "source": "policy-manual.pdf",
+          "section": "General Policies",
+          "page": 5
+        }
+      },
+      {
+        "text": "Moderately relevant content that provides some context but doesn't directly answer the question.",
+        "score": 0.65,
+        "metadata": {
+          "source": "background-info.pdf",
+          "section": "Context",
+          "page": 20
+        }
+      },
+      {
+        "text": "Low relevance content that might be tangentially related to the topic.",
+        "score": 0.35,
+        "metadata": {
+          "source": "tangential-doc.pdf",
+          "section": "Related Topics",
+          "page": 15
+        }
+      }
+    ]
+  },
+  "largeResultSet": {
+    "results": [
+      {
+        "text": "First highly relevant document with detailed information about the queried topic.",
+        "score": 0.95,
+        "metadata": { "source": "doc1.pdf", "page": 1 }
+      },
+      {
+        "text": "Second relevant document providing additional context and details.",
+        "score": 0.88,
+        "metadata": { "source": "doc2.pdf", "page": 3 }
+      },
+      {
+        "text": "Third document with supplementary information.",
+        "score": 0.83,
+        "metadata": { "source": "doc3.pdf", "page": 7 }
+      },
+      {
+        "text": "Fourth document containing related information.",
+        "score": 0.79,
+        "metadata": { "source": "doc4.pdf", "page": 12 }
+      },
+      {
+        "text": "Fifth document with background context.",
+        "score": 0.75,
+        "metadata": { "source": "doc5.pdf", "page": 18 }
+      },
+      {
+        "text": "Sixth document with additional details.",
+        "score": 0.72,
+        "metadata": { "source": "doc6.pdf", "page": 25 }
+      }
+    ]
+  },
+  "documentsWithoutMetadata": {
+    "results": [
+      {
+        "text": "Document content without any metadata information.",
+        "score": 0.85
+      },
+      {
+        "text": "Another document with minimal metadata.",
+        "score": 0.80,
+        "metadata": {}
+      }
+    ]
+  },
+  "technicalDocuments": {
+    "results": [
+      {
+        "text": "API documentation: To authenticate with our REST API, include the Bearer token in the Authorization header. Example: Authorization: Bearer your-token-here",
+        "score": 0.91,
+        "metadata": {
+          "source": "api-docs.md",
+          "section": "Authentication",
+          "type": "technical"
+        }
+      },
+      {
+        "text": "Database schema: The users table contains columns: id (primary key), email (unique), password_hash, created_at, updated_at. Foreign key relationships exist with the profiles table.",
+        "score": 0.87,
+        "metadata": {
+          "source": "db-schema.sql",
+          "section": "Tables",
+          "type": "technical"
+        }
+      }
+    ]
+  },
+  "multilanguageContent": {
+    "results": [
+      {
+        "text": "Company policies apply to all employees regardless of location. Les politiques de l'entreprise s'appliquent à tous les employés, peu importe leur emplacement.",
+        "score": 0.84,
+        "metadata": {
+          "source": "international-policies.pdf",
+          "language": "en-fr",
+          "section": "Global Policies"
+        }
+      }
+    ]
+  },
+  "apiErrorResponses": {
+    "unauthorized": {
+      "error": "Unauthorized",
+      "message": "Invalid or expired JWT token",
+      "code": 401
+    },
+    "badRequest": {
+      "error": "Bad Request",
+      "message": "Invalid query parameters",
+      "code": 400
+    },
+    "rateLimited": {
+      "error": "Too Many Requests",
+      "message": "Rate limit exceeded. Please try again later.",
+      "code": 429,
+      "retryAfter": 60
+    },
+    "serverError": {
+      "error": "Internal Server Error",
+      "message": "An unexpected error occurred",
+      "code": 500
+    },
+    "serviceUnavailable": {
+      "error": "Service Unavailable",
+      "message": "Vector database temporarily unavailable",
+      "code": 503
+    }
+  },
+  "edgeCases": {
+    "veryLongText": {
+      "results": [
+        {
+          "text": "This is an extremely long document that contains a lot of detailed information about various topics and procedures that might be relevant to the user's query. " +
+                 "It includes comprehensive explanations, examples, code snippets, and step-by-step instructions that span multiple paragraphs and sections. " +
+                 "The content covers historical context, current implementations, future plans, technical specifications, business requirements, and operational procedures. " +
+                 "This type of lengthy content tests the formatting and truncation capabilities of the RAGE system to ensure it can handle large documents gracefully without overwhelming the LLM context window.",
+          "score": 0.86,
+          "metadata": {
+            "source": "comprehensive-guide.pdf",
+            "wordCount": 1247,
+            "pages": "45-52"
+          }
+        }
+      ]
+    },
+    "specialCharacters": {
+      "results": [
+        {
+          "text": "Configuration example: {\"api_key\": \"sk-1234567890\", \"timeout\": 30000, \"retry_count\": 3, \"endpoints\": [\"https://api.example.com/v1\", \"https://backup.example.com/v1\"]}",
+          "score": 0.88,
+          "metadata": {
+            "source": "config-examples.json",
+            "format": "json"
+          }
+        }
+      ]
+    },
+    "emptyText": {
+      "results": [
+        {
+          "text": "",
+          "score": 0.75,
+          "metadata": {
+            "source": "empty-document.pdf",
+            "note": "Document exists but contains no extractable text"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -17,6 +17,16 @@ const { getFiles } = require('~/models/File');
 const TextStream = require('./TextStream');
 const { logger } = require('~/config');
 
+// RAGE Interceptor Integration
+let RageInterceptor;
+try {
+  RageInterceptor = require('../../../rageapi/interceptors/RageInterceptor');
+  logger.info('[BaseClient] RAGE Interceptor loaded successfully');
+} catch (error) {
+  logger.debug('[BaseClient] RAGE Interceptor not available:', error.message);
+  RageInterceptor = null;
+}
+
 class BaseClient {
   constructor(apiKey, options = {}) {
     this.apiKey = apiKey;
@@ -59,6 +69,18 @@ class BaseClient {
     this.currentMessages = [];
     /** @type {import('librechat-data-provider').VisionModes | undefined} */
     this.visionMode;
+    
+    // Initialize RAGE Interceptor if available
+    this.rageInterceptor = null;
+    if (RageInterceptor) {
+      try {
+        this.rageInterceptor = new RageInterceptor();
+        logger.debug('[BaseClient] RAGE Interceptor initialized successfully');
+      } catch (error) {
+        logger.warn('[BaseClient] Failed to initialize RAGE Interceptor:', error.message);
+        this.rageInterceptor = null;
+      }
+    }
   }
 
   setOptions() {
@@ -79,6 +101,15 @@ class BaseClient {
 
   async buildMessages() {
     throw new Error('Subclasses must implement buildMessages');
+    // NOTE: Subclass implementations should pass the 'opts' parameter to handleContextStrategy
+    // to enable RAGE context injection. Example:
+    // const result = await this.handleContextStrategy({
+    //   instructions,
+    //   orderedMessages,
+    //   formattedMessages,
+    //   buildTokenMap,
+    //   options: opts  // <- Pass options for RAGE context
+    // });
   }
 
   async summarizeMessages() {
@@ -227,6 +258,91 @@ class BaseClient {
       text,
       isCreatedByUser: true,
     };
+  }
+
+  /**
+   * Enriches message with RAGE context if available
+   * @param {string} message - User message to enrich
+   * @param {Object} options - Enrichment options
+   * @returns {Promise<string|null>} RAGE context or null
+   */
+  async enrichWithRage(message, options = {}) {
+    if (!this.rageInterceptor || !message) {
+      return null;
+    }
+
+    try {
+      const enrichmentOptions = {
+        userId: options.user?.id || options.user,
+        conversationId: options.conversationId,
+        correlationId: options.correlationId,
+        language: options.language || 'english'
+      };
+
+      logger.debug('[BaseClient] Enriching message with RAGE', {
+        messageLength: message.length,
+        userId: enrichmentOptions.userId,
+        conversationId: enrichmentOptions.conversationId
+      });
+
+      const rageContext = await this.rageInterceptor.enrichMessage(message, enrichmentOptions);
+      
+      if (rageContext) {
+        logger.debug('[BaseClient] RAGE context generated', {
+          contextLength: rageContext.length,
+          userId: enrichmentOptions.userId
+        });
+      } else {
+        logger.debug('[BaseClient] No RAGE context generated');
+      }
+
+      return rageContext;
+    } catch (error) {
+      logger.warn('[BaseClient] RAGE enrichment failed:', error.message);
+      return null; // Graceful degradation
+    }
+  }
+
+  /**
+   * Adds RAGE context to messages array as system message
+   * @param {Array} messages - Messages array to modify
+   * @param {string} rageContext - RAGE context to inject
+   * @returns {Array} Modified messages array
+   */
+  addRageContext(messages, rageContext) {
+    if (!rageContext || !Array.isArray(messages)) {
+      return messages;
+    }
+
+    // Create system message with RAGE context
+    const contextMessage = {
+      role: 'system',
+      content: rageContext,
+      name: 'rage_context',
+      timestamp: new Date().toISOString()
+    };
+
+    // Find the best position to insert context
+    // Typically after any existing system messages but before user messages
+    let insertIndex = 0;
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].role === 'system') {
+        insertIndex = i + 1;
+      } else {
+        break;
+      }
+    }
+
+    const modifiedMessages = [...messages];
+    modifiedMessages.splice(insertIndex, 0, contextMessage);
+
+    logger.debug('[BaseClient] RAGE context injected into messages', {
+      insertIndex,
+      totalMessages: modifiedMessages.length,
+      contextLength: rageContext.length
+    });
+
+    return modifiedMessages;
   }
 
   async handleStartMethods(message, opts) {
@@ -421,6 +537,7 @@ class BaseClient {
     orderedMessages,
     formattedMessages,
     buildTokenMap = true,
+    options = {},
   }) {
     let _instructions;
     let tokenCount;
@@ -527,6 +644,34 @@ class BaseClient {
     // Make sure to only continue summarization logic if the summary message was generated
     shouldSummarize = summaryMessage != null && shouldSummarize === true;
 
+    // RAGE Context Injection
+    // Inject RAGE context if available and there's enough token space
+    if (options.rageContext && remainingContextTokens > 0) {
+      try {
+        // Estimate tokens for RAGE context (rough calculation: 1 token ≈ 4 characters)
+        const rageContextTokens = Math.ceil(options.rageContext.length / 4);
+        
+        if (rageContextTokens <= remainingContextTokens * 0.3) { // Use max 30% of remaining tokens
+          payload = this.addRageContext(payload, options.rageContext);
+          remainingContextTokens -= rageContextTokens;
+          
+          logger.debug('[BaseClient] RAGE context injected into payload', {
+            rageContextTokens,
+            remainingTokensAfter: remainingContextTokens,
+            payloadLength: payload.length
+          });
+        } else {
+          logger.debug('[BaseClient] RAGE context too large for remaining tokens', {
+            rageContextTokens,
+            remainingContextTokens,
+            thresholdTokens: Math.floor(remainingContextTokens * 0.3)
+          });
+        }
+      } catch (error) {
+        logger.warn('[BaseClient] Failed to inject RAGE context:', error.message);
+      }
+    }
+
     logger.debug('[BaseClient] Context Count (2/2)', {
       remainingContextTokens,
       maxContextTokens: this.maxContextTokens,
@@ -569,6 +714,33 @@ class BaseClient {
     let userMessagePromise;
     const { user, head, isEdited, conversationId, responseMessageId, saveOptions, userMessage } =
       await this.handleStartMethods(message, opts);
+
+    // RAGE Enrichment Integration
+    // Enrich the message with contextual information if RAGE is available
+    let rageContext = null;
+    if (!isEdited && this.rageInterceptor) {
+      try {
+        rageContext = await this.enrichWithRage(message, {
+          user,
+          conversationId,
+          correlationId: opts.correlationId || crypto.randomUUID(),
+          language: opts.language
+        });
+        
+        if (rageContext) {
+          // Store RAGE context in options for use in buildMessages/handleContextStrategy
+          opts.rageContext = rageContext;
+          logger.debug('[BaseClient] RAGE context attached to options', {
+            contextLength: rageContext.length,
+            conversationId,
+            userId: user?.id || user
+          });
+        }
+      } catch (error) {
+        logger.warn('[BaseClient] RAGE enrichment error:', error.message);
+        // Continue without RAGE context - graceful degradation
+      }
+    }
 
     if (opts.progressCallback) {
       opts.onProgress = opts.progressCallback.call(null, {

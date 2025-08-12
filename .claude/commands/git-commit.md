@@ -1,13 +1,20 @@
 # git-commit
 
-> Realize the commit of already staged files with concise, standardized, and unambiguous commit messages, following the `conventional commits` model.
-> Use TodoWrite to orient execution.
+## Goal
 
-## Purpose
+Commit changes with concise, standardized, and unambiguous commit messages, following the `conventional commits` model.
 
-Precisely declare **what was changed and why**, in a way that is readable by both humans and machines, considering only changes in files already added to the staging area.
+## Instructions
 
-**Note**: Never add files to the staging area automatically.
+Read $ARGUMENTS as options.
+
+**Commit mode**: If the `-all` option is provided, enable full-commit mode; otherwise, enable stage-only mode.
+
+**Stage validation**: If full-commit mode is enabled, add all files from the current folder and its descendants to the stage, equivalent to `git add -A .`. If stage-only mode is enabled, commit only what is already staged.
+
+**Commit message**: Clearly state **what was changed and why**, in a way that is readable by both humans and machines, considering only changes in files already added to the staging area.
+
+**Extra tooling**: Use TodoWrite to guide execution.
 
 ## Structure
 
