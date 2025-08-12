@@ -284,6 +284,24 @@ RAGE_RERANK=false
 ### RESULTADO ESPERADO:
 Após a implementação, toda conversa no LibreChat será automaticamente enriquecida com contexto relevante do Qdrant via Vectorize.io. O usuário não perceberá diferença na interface, mas as respostas dos LLMs serão mais precisas e contextualizadas com informações da base de conhecimento organizacional.
 
+### NOTAS ADICIONAIS:
+
+- o projeto RAGE será posto em ./rageapi, para evitar macular a estrutura de código do proprio LibreChat.
+- acrescnete também um README.md bem explicativo
+- entao termos os componentes princiais:
+
+```text
+/
+|
++-- api/
+|
++-- client/
+|
+`-- rageapi/
+    |
+    `--- README.md
+```
+
 ### LOGS DE MONITORAMENTO:
 O sistema gerará logs com prefixo `[RAGE]` para facilitar o monitoramento:
 - `[RAGE] Contexto adicionado à requisição` - quando contexto foi encontrado
