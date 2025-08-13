@@ -98,14 +98,11 @@ File naming reflects the primary feature function while maintaining consistency 
 
 ### Phase 3: Task Documentation Generation
 
-**BEGIN THINK HARD for Task Documentation**
-
 Create a comprehensive `./PRPs/TASKS.md` file that serves as the central coordination document for implementation teams. This file connects individual PRPs to specific implementation tasks while maintaining clear dependency relationships.
 
 The task documentation uses the `./PRPs/.templates/template-tasks.md` template as its foundation, ensuring consistency with established organizational standards.
 
-Task organization prioritizes logical implementation sequences, identifies critical path dependencies, and provides effort estimation guidance for project planning purposes.
-**END THINK HARD**
+Task organization prioritizes logical implementation sequences, identifies critical path dependencies.
 
 ### Phase 4: Architectural Consistency Review
 
