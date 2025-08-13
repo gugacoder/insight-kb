@@ -39,7 +39,7 @@ function AuthLayout({
         <div className="mx-auto sm:max-w-sm">
           <ErrorMessage>
             {localize('com_auth_error_invalid_reset_token')}{' '}
-            <a className="font-semibold text-green-600 hover:underline" href="/forgot-password">
+            <a className="font-semibold text-blue-600 hover:underline" href="/forgot-password">
               {localize('com_auth_click_here')}
             </a>{' '}
             {localize('com_auth_to_try_again')}
@@ -60,14 +60,14 @@ function AuthLayout({
     <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
       <Banner />
       <BlinkAnimation active={isFetching}>
-        <div className="mt-6 h-10 w-full bg-cover">
+        <div className="mt-20 mb-6 h-40 w-full bg-cover">
           <img
-            src="/assets/logo.svg"
+            src="/assets/nic-insight-logo.svg"
             className="h-full w-full object-contain dark:hidden"
             alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'NIC Insight' })}
           />
           <img
-            src="/assets/logo-dark.svg"
+            src="/assets/nic-insight-logo-dark.svg"
             className="h-full w-full object-contain hidden dark:block"
             alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'NIC Insight' })}
           />
