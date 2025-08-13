@@ -151,7 +151,12 @@ class ConfigManager {
    */
   getConfig(includeSecrets = false) {
     if (!this.isInitialized) {
-      throw new Error('Configuration not initialized. Call initialize() first.');
+      // Auto-recovery: Try to re-initialize automatically
+      try {
+        this.initialize();
+      } catch (error) {
+        throw new Error(`Configuration not initialized and auto-recovery failed: ${error.message}`);
+      }
     }
 
     if (includeSecrets) {

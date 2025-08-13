@@ -1,8 +1,9 @@
 const fetch = require('node-fetch');
-const { errorHandler } = require('../resilience/errorHandler');
+const { ErrorHandler } = require('../resilience/errorHandler');
 const { ErrorFactory } = require('../errors/RageError');
 const { rageLogger } = require('../logging/logger');
 const { metricsCollector } = require('../logging/metrics');
+const logger = require('../../api/utils/logger');
 
 /**
  * Vectorize.io API Client Utility
@@ -26,6 +27,9 @@ class VectorizeClient {
       retryDelay: config.retryDelay || 1000,
       debug: config.debug || false
     };
+    
+    // Create ErrorHandler instance for resilience
+    this.errorHandler = new ErrorHandler();
   }
 
   /**
@@ -48,7 +52,7 @@ class VectorizeClient {
       return this.executeRequest('POST', url, requestBody, correlationId);
     };
 
-    return errorHandler.executeWithResilience(operation, {
+    return this.errorHandler.executeWithResilience(operation, {
       operation: 'vectorizeApi',
       correlationId,
       timeout: this.config.timeout

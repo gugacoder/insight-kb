@@ -27,7 +27,7 @@ class RageLogger {
       RAGE_ENABLE_AUDIT_LOG: false
     };
     this.isInitialized = true;
-    
+     
     logger.warn('RAGE Logger initialized with fallback configuration', {
       reason: 'Avoiding circular dependency - config will be injected later'
     });
