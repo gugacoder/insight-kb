@@ -14,6 +14,8 @@ const ConfigDefaults = {
   RAGE_NUM_RESULTS: 5,
   RAGE_RERANK: true,
   RAGE_MIN_RELEVANCE_SCORE: 0.7,
+  RAGE_MIN_SIMILARITY_SCORE: 0.3,
+  RAGE_SCORE_FIELD: 'auto',
 
   // Performance Settings
   RAGE_TIMEOUT_MS: 5000,

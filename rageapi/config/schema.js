@@ -78,6 +78,25 @@ const ConfigSchema = {
     example: '0.7'
   },
 
+  RAGE_MIN_SIMILARITY_SCORE: {
+    type: 'number',
+    required: false,
+    default: 0.3,
+    min: 0.0,
+    max: 1.0,
+    description: 'Minimum similarity score threshold for vector similarity-based filtering',
+    example: '0.3'
+  },
+
+  RAGE_SCORE_FIELD: {
+    type: 'string',
+    required: false,
+    default: 'auto',
+    enum: ['similarity', 'relevancy', 'auto'],
+    description: 'Score field to use for filtering: similarity, relevancy, or auto-detect',
+    example: 'auto'
+  },
+
   // Performance Settings
   RAGE_TIMEOUT_MS: {
     type: 'number',

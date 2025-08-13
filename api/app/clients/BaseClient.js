@@ -303,47 +303,6 @@ class BaseClient {
     }
   }
 
-  /**
-   * Adds RAGE context to messages array as system message
-   * @param {Array} messages - Messages array to modify
-   * @param {string} rageContext - RAGE context to inject
-   * @returns {Array} Modified messages array
-   */
-  addRageContext(messages, rageContext) {
-    if (!rageContext || !Array.isArray(messages)) {
-      return messages;
-    }
-
-    // Create system message with RAGE context
-    const contextMessage = {
-      role: 'system',
-      content: rageContext,
-      name: 'rage_context',
-      timestamp: new Date().toISOString()
-    };
-
-    // Find the best position to insert context
-    // Typically after any existing system messages but before user messages
-    let insertIndex = 0;
-    for (let i = 0; i < messages.length; i++) {
-      if (messages[i].role === 'system') {
-        insertIndex = i + 1;
-      } else {
-        break;
-      }
-    }
-
-    const modifiedMessages = [...messages];
-    modifiedMessages.splice(insertIndex, 0, contextMessage);
-
-    logger.debug('[BaseClient] RAGE context injected into messages', {
-      insertIndex,
-      totalMessages: modifiedMessages.length,
-      contextLength: rageContext.length
-    });
-
-    return modifiedMessages;
-  }
 
   async handleStartMethods(message, opts) {
     const {
@@ -644,33 +603,6 @@ class BaseClient {
     // Make sure to only continue summarization logic if the summary message was generated
     shouldSummarize = summaryMessage != null && shouldSummarize === true;
 
-    // RAGE Context Injection
-    // Inject RAGE context if available and there's enough token space
-    if (options.rageContext && remainingContextTokens > 0) {
-      try {
-        // Estimate tokens for RAGE context (rough calculation: 1 token ≈ 4 characters)
-        const rageContextTokens = Math.ceil(options.rageContext.length / 4);
-        
-        if (rageContextTokens <= remainingContextTokens * 0.3) { // Use max 30% of remaining tokens
-          payload = this.addRageContext(payload, options.rageContext);
-          remainingContextTokens -= rageContextTokens;
-          
-          logger.debug('[BaseClient] RAGE context injected into payload', {
-            rageContextTokens,
-            remainingTokensAfter: remainingContextTokens,
-            payloadLength: payload.length
-          });
-        } else {
-          logger.debug('[BaseClient] RAGE context too large for remaining tokens', {
-            rageContextTokens,
-            remainingContextTokens,
-            thresholdTokens: Math.floor(remainingContextTokens * 0.3)
-          });
-        }
-      } catch (error) {
-        logger.warn('[BaseClient] Failed to inject RAGE context:', error.message);
-      }
-    }
 
     logger.debug('[BaseClient] Context Count (2/2)', {
       remainingContextTokens,
@@ -715,32 +647,6 @@ class BaseClient {
     const { user, head, isEdited, conversationId, responseMessageId, saveOptions, userMessage } =
       await this.handleStartMethods(message, opts);
 
-    // RAGE Enrichment Integration
-    // Enrich the message with contextual information if RAGE is available
-    let rageContext = null;
-    if (!isEdited && this.rageInterceptor) {
-      try {
-        rageContext = await this.enrichWithRage(message, {
-          user,
-          conversationId,
-          correlationId: opts.correlationId || crypto.randomUUID(),
-          language: opts.language
-        });
-        
-        if (rageContext) {
-          // Store RAGE context in options for use in buildMessages/handleContextStrategy
-          opts.rageContext = rageContext;
-          logger.debug('[BaseClient] RAGE context attached to options', {
-            contextLength: rageContext.length,
-            conversationId,
-            userId: user?.id || user
-          });
-        }
-      } catch (error) {
-        logger.warn('[BaseClient] RAGE enrichment error:', error.message);
-        // Continue without RAGE context - graceful degradation
-      }
-    }
 
     if (opts.progressCallback) {
       opts.onProgress = opts.progressCallback.call(null, {
@@ -798,6 +704,15 @@ class BaseClient {
       this.getBuildMessagesOptions(opts),
       opts,
     );
+
+    logger.debug('[PAYLOAD] BaseClient: Final payload before API call', {
+      provider: this.constructor.name,
+      totalMessages: Array.isArray(payload) ? payload.length : 'not_array',
+      payloadType: typeof payload,
+      messages: payload,
+      conversationId: conversationId,
+      userId: user?.id || user
+    });
 
     if (tokenCountMap) {
       logger.debug('[BaseClient] tokenCountMap', tokenCountMap);

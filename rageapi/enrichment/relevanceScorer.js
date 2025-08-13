@@ -12,6 +12,8 @@ class RelevanceScorer {
     this.config = configManager.getConfig();
     
     this.minRelevanceScore = options.minRelevanceScore || this.config.RAGE_MIN_RELEVANCE_SCORE || 0.7;
+    this.minSimilarityScore = options.minSimilarityScore || this.config.RAGE_MIN_SIMILARITY_SCORE || 0.3;
+    this.scoreField = options.scoreField || this.config.RAGE_SCORE_FIELD || 'auto';
     this.scoreBoosts = options.scoreBoosts || {
       recency: 0.1,        // Boost for recent documents
       exactMatch: 0.15,    // Boost for exact keyword matches
@@ -45,16 +47,18 @@ class RelevanceScorer {
     rageLogger.debug('Starting relevance scoring', {
       documentCount: documents.length,
       originalQuery: originalQuery?.substring(0, 100),
-      minScore: this.minRelevanceScore
+      scoreField: this.scoreField,
+      minRelevanceScore: this.minRelevanceScore,
+      minSimilarityScore: this.minSimilarityScore
     }, correlationId);
 
     try {
       // Apply enhanced scoring
       const scoredDocuments = documents.map(doc => this.enhanceScore(doc, originalQuery, correlationId));
       
-      // Filter by minimum relevance score
+      // Filter by appropriate threshold based on selected score field
       const filteredDocuments = scoredDocuments.filter(doc => 
-        doc.enhancedScore >= this.minRelevanceScore
+        doc.enhancedScore >= (doc.selectedThreshold || this.minRelevanceScore)
       );
       
       // Sort by enhanced score
@@ -63,11 +67,24 @@ class RelevanceScorer {
       // Apply diversity filtering to avoid too many similar results
       const diversifiedDocuments = this.applyDiversityFilter(sortedDocuments, correlationId);
       
+      // Analyze score field usage
+      const scoreFieldUsage = {};
+      scoredDocuments.forEach(doc => {
+        const field = doc.selectedField || 'unknown';
+        scoreFieldUsage[field] = (scoreFieldUsage[field] || 0) + 1;
+      });
+
       rageLogger.debug('Relevance scoring completed', {
         originalCount: documents.length,
         scoredCount: scoredDocuments.length,
         filteredCount: filteredDocuments.length,
-        finalCount: diversifiedDocuments.length
+        finalCount: diversifiedDocuments.length,
+        scoreFieldUsage,
+        config: {
+          scoreField: this.scoreField,
+          minRelevanceScore: this.minRelevanceScore,
+          minSimilarityScore: this.minSimilarityScore
+        }
       }, correlationId);
 
       return diversifiedDocuments;
@@ -78,8 +95,21 @@ class RelevanceScorer {
         documentCount: documents.length
       }, correlationId);
       
-      // Fallback to original filtering
-      return documents.filter(doc => (doc.score || 0) >= this.minRelevanceScore);
+      // Fallback to original filtering with auto-detection
+      return documents.filter(doc => {
+        if (this.scoreField === 'relevancy') {
+          return (doc.relevancy || 0) >= this.minRelevanceScore;
+        } else if (this.scoreField === 'similarity') {
+          return (doc.similarity || 0) >= this.minSimilarityScore;
+        } else {
+          // Auto mode: use relevancy if available and high, otherwise similarity
+          if (doc.relevancy !== undefined && doc.relevancy > 0.5) {
+            return doc.relevancy >= this.minRelevanceScore;
+          } else {
+            return (doc.similarity || 0) >= this.minSimilarityScore;
+          }
+        }
+      });
     }
   }
 
@@ -91,7 +121,32 @@ class RelevanceScorer {
    * @returns {Object} Document with enhanced score
    */
   enhanceScore(doc, query, correlationId) {
-    const originalScore = doc.score || 0;
+    // Auto-detect which score field to use based on configuration and availability
+    let originalScore;
+    let selectedThreshold;
+    let selectedField;
+
+    if (this.scoreField === 'auto') {
+      // Use relevancy if available and high, otherwise similarity
+      if (doc.relevancy !== undefined && doc.relevancy > 0.5) {
+        originalScore = doc.relevancy;
+        selectedThreshold = this.minRelevanceScore;
+        selectedField = 'relevancy';
+      } else {
+        originalScore = doc.similarity || 0;
+        selectedThreshold = this.minSimilarityScore;
+        selectedField = 'similarity';
+      }
+    } else if (this.scoreField === 'relevancy') {
+      originalScore = doc.relevancy || 0;
+      selectedThreshold = this.minRelevanceScore;
+      selectedField = 'relevancy';
+    } else {
+      originalScore = doc.similarity || 0;
+      selectedThreshold = this.minSimilarityScore;
+      selectedField = 'similarity';
+    }
+
     let enhancedScore = originalScore;
     const boostDetails = {};
 
@@ -123,6 +178,8 @@ class RelevanceScorer {
         ...doc,
         enhancedScore,
         originalScore,
+        selectedField,
+        selectedThreshold,
         scoreBoosts: boostDetails,
         scoreImprovement: enhancedScore - originalScore
       };
@@ -138,6 +195,8 @@ class RelevanceScorer {
         ...doc,
         enhancedScore: originalScore,
         originalScore,
+        selectedField: selectedField || 'similarity',
+        selectedThreshold: selectedThreshold || this.minSimilarityScore,
         scoreBoosts: {},
         scoreImprovement: 0
       };
@@ -354,6 +413,14 @@ class RelevanceScorer {
       this.minRelevanceScore = options.minRelevanceScore;
     }
     
+    if (options.minSimilarityScore !== undefined) {
+      this.minSimilarityScore = options.minSimilarityScore;
+    }
+    
+    if (options.scoreField !== undefined) {
+      this.scoreField = options.scoreField;
+    }
+    
     if (options.scoreBoosts) {
       this.scoreBoosts = { ...this.scoreBoosts, ...options.scoreBoosts };
     }
@@ -372,6 +439,8 @@ class RelevanceScorer {
   getStats() {
     return {
       minRelevanceScore: this.minRelevanceScore,
+      minSimilarityScore: this.minSimilarityScore,
+      scoreField: this.scoreField,
       scoreBoosts: this.scoreBoosts,
       qualitySources: this.qualitySources
     };

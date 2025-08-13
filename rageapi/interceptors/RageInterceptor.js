@@ -1,4 +1,10 @@
 const fetch = require('node-fetch');
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Load environment variables from project root
+dotenv.config({ path: path.join(__dirname, '../../.env') });
+
 const { configManager } = require('../config');
 const { rageLogger } = require('../logging/logger');
 const { metricsCollector } = require('../logging/metrics');
@@ -29,7 +35,7 @@ class RageInterceptor {
       rageLogger.initialize();
       metricsCollector.initialize(configManager.get('RAGE_ENABLE_METRICS', true));
       
-      this.config = configManager.getConfig();
+      this.config = configManager.getConfig(true); // Include secrets for API authentication
       
       // Create vectorize client config with mapped properties
       const vectorizeConfig = {
@@ -53,7 +59,9 @@ class RageInterceptor {
     });
     
     this.relevanceScorer = new RelevanceScorer({
-      minRelevanceScore: this.config.RAGE_MIN_RELEVANCE_SCORE
+      minRelevanceScore: this.config.RAGE_MIN_RELEVANCE_SCORE,
+      minSimilarityScore: this.config.RAGE_MIN_SIMILARITY_SCORE,
+      scoreField: this.config.RAGE_SCORE_FIELD
     });
     
     this.tokenOptimizer = new TokenOptimizer({
@@ -149,25 +157,34 @@ class RageInterceptor {
         rerank: this.config.RAGE_RERANK
       }, correlationId);
       
-      if (!retrievalResult.results || retrievalResult.results.length === 0) {
+      // Defensive validation of API response structure
+      if (!retrievalResult || typeof retrievalResult !== 'object') {
+        rageLogger.error('Invalid API response structure', {
+          responseType: typeof retrievalResult,
+          hasDocuments: !!retrievalResult?.documents
+        }, correlationId);
+        return null;
+      }
+      
+      if (!retrievalResult.documents || retrievalResult.documents.length === 0) {
         rageLogger.enrichment('no_results', {}, correlationId);
         return null;
       }
 
       rageLogger.enrichment('score', {
-        originalResults: retrievalResult.results.length
+        originalResults: retrievalResult.documents.length
       }, correlationId);
 
       // Enhanced relevance scoring and filtering
       const scoredDocuments = this.relevanceScorer.scoreAndFilter(
-        retrievalResult.results, 
+        retrievalResult.documents, 
         searchQuery, 
         { correlationId }
       );
 
       if (scoredDocuments.length === 0) {
         rageLogger.enrichment('filtered_out', {
-          totalResults: retrievalResult.results.length,
+          totalResults: retrievalResult.documents.length,
           filteredResults: 0,
           minScore: this.config.RAGE_MIN_RELEVANCE_SCORE
         }, correlationId);
@@ -202,15 +219,15 @@ class RageInterceptor {
 
       const finalContext = optimizationResult.optimizedContext;
       const contextMetadata = {
-        documentsRetrieved: retrievalResult.results.length,
-        documentsScored: scoredDocuments.length,
-        documentsIncluded: optimizationResult.documentsIncluded || scoredDocuments.length,
-        tokenCount: optimizationResult.tokenCount,
-        compressionRatio: optimizationResult.compressionRatio,
-        truncated: optimizationResult.truncated,
-        sources: formattingResult.sources,
-        averageRelevance: formattingResult.relevanceScore,
-        optimizationStrategy: optimizationResult.strategy
+        documentsRetrieved: retrievalResult.documents?.length || 0,
+        documentsScored: scoredDocuments?.length || 0,
+        documentsIncluded: optimizationResult?.documentsIncluded || scoredDocuments?.length || 0,
+        tokenCount: optimizationResult?.tokenCount || 0,
+        compressionRatio: optimizationResult?.compressionRatio || 0,
+        truncated: optimizationResult?.truncated || false,
+        sources: formattingResult?.sources || [],
+        averageRelevance: formattingResult?.relevanceScore || 0,
+        optimizationStrategy: optimizationResult?.strategy || 'none'
       };
 
       rageLogger.enrichment('complete', {

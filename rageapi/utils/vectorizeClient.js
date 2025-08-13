@@ -45,9 +45,13 @@ class VectorizeClient {
       const requestBody = {
         question: queryParams.question,
         numResults: queryParams.numResults || 5,
-        rerank: queryParams.rerank !== false,
-        'metadata-filters': queryParams.metadataFilters || {}
+        rerank: queryParams.rerank !== false
       };
+
+      // Only include metadata-filters if provided and is an array
+      if (queryParams.metadataFilters && Array.isArray(queryParams.metadataFilters) && queryParams.metadataFilters.length > 0) {
+        requestBody['metadata-filters'] = queryParams.metadataFilters;
+      }
 
       return this.executeRequest('POST', url, requestBody, correlationId);
     };
