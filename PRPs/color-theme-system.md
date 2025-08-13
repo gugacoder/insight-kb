@@ -92,7 +92,7 @@ You are a **CSS Architect** with expertise in design systems and color theory im
 ### Documentation and References
 
 **Technical Documentation:**
-- NIC Brand Guide: `PRPs/Examples/Insight KB Brand.md`
+- NIC Brand Guide: `PRPs/Examples/NIC Insight Brand.md`
 - LibreChat Style Guide: `PRPs/Reports/STYLE_GUIDE.md`
 - Current color system in `client/src/style.css`
 - Tailwind CSS theming documentation

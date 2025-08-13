@@ -104,7 +104,7 @@ You are a **UI Component Developer** with expertise in design system implementat
 
 **Technical Documentation:**
 
-- NIC Brand Guide: `PRPs/Examples/Insight KB Brand.md`
+- NIC Brand Guide: `PRPs/Examples/NIC Insight Brand.md`
 - LibreChat component structure documentation
 - Radix UI component documentation
 - Accessibility component guidelines

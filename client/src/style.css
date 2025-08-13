@@ -6,6 +6,13 @@
 :root {
   --white: #fff;
   --black: #000;
+  /* NIC Brand Colors Base Palette */
+  --nic-blue-ish: #286292;
+  --nic-blue-ish-alt1: #3d95df;
+  --nic-gray-ish: #5fbcd3;
+  --nic-dark-ish: #101820;
+  --nic-red-ish: #c83737;
+  /* Derived Gray Scale for Light Theme */
   --gray-20: #ececf1;
   --gray-50: #f7f7f8;
   --gray-100: #ececec;
@@ -15,7 +22,7 @@
   --gray-500: #595959;
   --gray-600: #424242;
   --gray-700: #2f2f2f;
-  --gray-800: #212121;
+  --gray-800: var(--nic-dark-ish);
   --gray-850: #171717;
   --gray-900: #0d0d0d;
   --green-50: #ecfdf5;
@@ -51,7 +58,7 @@
   --amber-800: #92400e;
   --amber-900: #78350f;
   --amber-950: #451a03;
-  --brand-purple: #ab68ff;
+  --brand-purple: var(--nic-blue-ish);
   --gizmo-gray-500: #999;
   --gizmo-gray-600: #666;
   --gizmo-gray-950: #0f0f0f;
@@ -62,14 +69,14 @@
   --font-size-xl: 1.25rem;
 }
 html {
-  --brand-purple: #ab68ff;
+  --brand-purple: var(--nic-blue-ish);
   --presentation: var(--white);
-  --text-primary: var(--gray-800);
+  --text-primary: var(--nic-dark-ish);
   --text-secondary: var(--gray-600);
   --text-secondary-alt: var(--gray-500);
   --text-tertiary: var(--gray-500);
   --text-warning: var(--amber-500);
-  --ring-primary: var(--gray-500);
+  --ring-primary: var(--nic-blue-ish);
   --header-primary: var(--white);
   --header-hover: var(--gray-50);
   --header-button-hover: var(--gray-50);
@@ -85,10 +92,10 @@ html {
   --surface-tertiary: var(--gray-100);
   --surface-tertiary-alt: var(--white);
   --surface-dialog: var(--white);
-  --surface-submit: var(--green-700);
-  --surface-submit-hover: var(--green-800);
-  --surface-destructive: var(--red-700);
-  --surface-destructive-hover: var(--red-800);
+  --surface-submit: var(--nic-blue-ish);
+  --surface-submit-hover: var(--nic-blue-ish-alt1);
+  --surface-destructive: var(--nic-red-ish);
+  --surface-destructive-hover: #a82c2c;
   --surface-chat: var(--white);
   --border-light: var(--gray-200);
   --border-medium-alt: var(--gray-300);
@@ -123,8 +130,11 @@ html {
   --switch-unchecked: 0 0% 58%;
 }
 .dark {
-  --brand-purple: #ab68ff;
-  --presentation: var(--gray-800);
+  /* NIC Dark Theme Colors */
+  --nic-gray-ish: #3d95df;
+  --nic-dark-ish: #1e2a38;
+  --brand-purple: var(--nic-blue-ish);
+  --presentation: var(--nic-dark-ish);
   --text-primary: var(--gray-100);
   --text-secondary: var(--gray-300);
   --text-secondary-alt: var(--gray-400);
@@ -140,15 +150,15 @@ html {
   --surface-primary: var(--gray-900);
   --surface-primary-alt: var(--gray-850);
   --surface-primary-contrast: var(--gray-850);
-  --surface-secondary: var(--gray-800);
-  --surface-secondary-alt: var(--gray-800);
+  --surface-secondary: var(--nic-dark-ish);
+  --surface-secondary-alt: var(--nic-dark-ish);
   --surface-tertiary: var(--gray-700);
   --surface-tertiary-alt: var(--gray-700);
   --surface-dialog: var(--gray-850);
-  --surface-submit: var(--green-700);
-  --surface-submit-hover: var(--green-800);
-  --surface-destructive: var(--red-800);
-  --surface-destructive-hover: var(--red-900);
+  --surface-submit: var(--nic-blue-ish);
+  --surface-submit-hover: var(--nic-blue-ish-alt1);
+  --surface-destructive: var(--nic-red-ish);
+  --surface-destructive-hover: #a82c2c;
   --surface-chat: var(--gray-700);
   --border-light: var(--gray-700);
   --border-medium-alt: var(--gray-600);

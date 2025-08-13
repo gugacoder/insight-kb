@@ -38,6 +38,12 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
       colors: {
+        // NIC Brand Colors
+        'nic-blue-ish': 'var(--nic-blue-ish)',
+        'nic-blue-ish-alt1': 'var(--nic-blue-ish-alt1)',
+        'nic-gray-ish': 'var(--nic-gray-ish)',
+        'nic-dark-ish': 'var(--nic-dark-ish)',
+        'nic-red-ish': 'var(--nic-red-ish)',
         gray: {
           20: '#ececf1',
           50: '#f7f7f8',
@@ -48,7 +54,7 @@ module.exports = {
           500: '#595959',
           600: '#424242',
           700: '#2f2f2f',
-          800: '#212121',
+          800: 'var(--nic-dark-ish)',
           850: '#171717',
           900: '#0d0d0d',
         },
@@ -65,7 +71,7 @@ module.exports = {
           800: '#06373e',
           900: '#031f29',
         },
-        'brand-purple': 'var(--brand-purple)',
+        'brand-purple': 'var(--nic-blue-ish)',
         presentation: 'var(--presentation)',
         'text-primary': 'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',

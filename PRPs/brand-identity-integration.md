@@ -2,7 +2,7 @@
 
 ## Role
 
-You are a **Frontend Developer** with expertise in brand integration and visual identity implementation. Your responsibility is to implement the complete transformation of LibreChat's visual identity to Insight KB/NIC branding following established brand guidelines and maintaining technical excellence.
+You are a **Frontend Developer** with expertise in brand integration and visual identity implementation. Your responsibility is to implement the complete transformation of LibreChat's visual identity to NIC Insight/NIC branding following established brand guidelines and maintaining technical excellence.
 
 **Required Expertise:**
 - React/TypeScript development
@@ -18,12 +18,12 @@ You are a **Frontend Developer** with expertise in brand integration and visual 
 
 ## Objective
 
-**Primary Goal:** Transform LibreChat's core visual identity elements (logo, favicon, application title) to reflect the Insight KB/NIC brand identity as specified in the brand guidelines.
+**Primary Goal:** Transform LibreChat's core visual identity elements (logo, favicon, application title) to reflect the NIC Insight/NIC brand identity as specified in the brand guidelines.
 
 **Success Criteria:**
 - [ ] Replace LibreChat logo with NIC logo variants
 - [ ] Update all favicon formats with NIC branding
-- [ ] Change application title from "LibreChat" to "Insight KB"
+- [ ] Change application title from "LibreChat" to "NIC Insight"
 - [ ] Implement proper logo variants for light/dark themes
 - [ ] Ensure all asset formats are optimized for web performance
 
@@ -35,14 +35,14 @@ You are a **Frontend Developer** with expertise in brand integration and visual 
 ## Motivation
 
 **Business Value:**
-- Establishes clear brand identity for Insight KB platform
+- Establishes clear brand identity for NIC Insight platform
 - Creates professional and cohesive user experience
 - Differentiates from original LibreChat branding
 - Supports marketing and brand recognition efforts
 
 **Problem Statement:**
 - Current application displays LibreChat branding throughout interface
-- Users see LibreChat name and logo instead of Insight KB identity
+- Users see LibreChat name and logo instead of NIC Insight identity
 - Favicon and browser metadata still reference original LibreChat brand
 - Inconsistent brand representation across different interface states
 
@@ -98,7 +98,7 @@ You are a **Frontend Developer** with expertise in brand integration and visual 
 - PWA manifest requirements
 
 **External References:**
-- NIC Brand Guide: `PRPs/Examples/Insight KB Brand.md`
+- NIC Brand Guide: `PRPs/Examples/NIC Insight Brand.md`
 - Web performance best practices
 - Favicon generation standards
 - Accessibility guidelines for logos
@@ -142,7 +142,7 @@ You are a **Frontend Developer** with expertise in brand integration and visual 
    * **Input:** Source NIC logo files
    * **Process:**
      * Use an SVG processor to convert the selected NIC SVG logo into the same format, resolution, and optimization standard as the current asset it will replace
-     * Choose apropriate base format based on the SVG flles available in the document `Insight KB Brand.md`
+     * Choose apropriate base format based on the SVG flles available in the document `NIC Insight Brand.md`
    * **Output:** Complete favicon set (16x16, 32x32, 180x180, 192x192, maskable)
    * **Validation:** All PWA and browser requirements satisfied
 
@@ -171,9 +171,9 @@ You are a **Frontend Developer** with expertise in brand integration and visual 
    - **Validation:** Favicons display correctly in browser tabs
 
 3. **Modify Application Title**
-   - **Input:** "Insight KB" title specification
+   - **Input:** "NIC Insight" title specification
    - **Output:** Updated `client/index.html` title tag
-   - **Validation:** Browser title displays "Insight KB"
+   - **Validation:** Browser title displays "NIC Insight"
 
 ### Phase 3: Theme-Aware Logo Implementation
 **Objective:** Implement proper logo variants for light/dark themes
@@ -312,7 +312,7 @@ npm audit
 
 ### Acceptance Testing
 **User Acceptance Criteria:**
-- [ ] User sees "Insight KB" in browser title
+- [ ] User sees "NIC Insight" in browser title
 - [ ] NIC logo displays correctly in application header
 - [ ] Favicon shows NIC branding in browser tab
 - [ ] Logo adapts correctly to theme changes
