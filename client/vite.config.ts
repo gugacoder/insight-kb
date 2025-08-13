@@ -45,6 +45,8 @@ export default defineConfig(({ command }) => ({
           'assets/icon-*.png',
           'assets/apple-touch-icon*.png',
           'assets/maskable-icon.png',
+          'assets/logo*.svg',
+          'assets/brand/**/*.{svg,png,ico}',
           'manifest.webmanifest',
         ],
         globIgnores: ['images/**/*', '**/*.map', 'index.html'],
@@ -53,12 +55,12 @@ export default defineConfig(({ command }) => ({
       },
       includeAssets: [],
       manifest: {
-        name: 'LibreChat',
-        short_name: 'LibreChat',
+        name: 'NIC Insight',
+        short_name: 'NIC Insight',
         start_url: '/',
         display: 'standalone',
-        background_color: '#000000',
-        theme_color: '#009688',
+        background_color: '#1e2a38',
+        theme_color: '#286292',
         icons: [
           {
             src: '/assets/favicon-32x32.png',
