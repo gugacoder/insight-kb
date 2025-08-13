@@ -714,6 +714,31 @@ class BaseClient {
       userId: user?.id || user
     });
 
+    // RAGE context injection
+    if (this.rageInterceptor && !isEdited) {
+      try {
+        const rageContext = await this.enrichWithRage(userMessage.text, {
+          user,
+          conversationId,
+          correlationId: opts.correlationId || crypto.randomUUID()
+        });
+        
+        if (rageContext && Array.isArray(payload)) {
+          const systemIndex = payload.findIndex(msg => msg.role === 'system');
+          
+          if (systemIndex >= 0) {
+            payload[systemIndex].content += '\n\n' + rageContext;
+            logger.debug('[RAGE] Context appended to existing system message');
+          } else {
+            payload.unshift({ role: 'system', content: rageContext });
+            logger.debug('[RAGE] Context added as new system message');
+          }
+        }
+      } catch (error) {
+        logger.warn('[RAGE] Failed to inject context:', error.message);
+      }
+    }
+
     if (tokenCountMap) {
       logger.debug('[BaseClient] tokenCountMap', tokenCountMap);
       if (tokenCountMap[userMessage.messageId]) {
