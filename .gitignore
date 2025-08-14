@@ -133,3 +133,6 @@ helm/**/.values.yaml
 /.openai/
 /.tabnine/
 /.codeium
+
+*.tar.gz
+*.zip
