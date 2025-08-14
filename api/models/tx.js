@@ -86,6 +86,9 @@ const tokenValues = Object.assign(
     'gpt-4.1-mini': { prompt: 0.4, completion: 1.6 },
     'gpt-4.1': { prompt: 2, completion: 8 },
     'gpt-4.5': { prompt: 75, completion: 150 },
+    'gpt-5': { prompt: 1.25, completion: 10 },
+    'gpt-5-mini': { prompt: 0.25, completion: 2 },
+    'gpt-5-nano': { prompt: 0.05, completion: 0.4 },
     'gpt-4o-mini': { prompt: 0.15, completion: 0.6 },
     'gpt-4o': { prompt: 2.5, completion: 10 },
     'gpt-4o-2024-05-13': { prompt: 5, completion: 15 },
@@ -167,6 +170,9 @@ const cacheTokenValues = {
   'claude-3-haiku': { write: 0.3, read: 0.03 },
   'claude-sonnet-4': { write: 3.75, read: 0.3 },
   'claude-opus-4': { write: 18.75, read: 1.5 },
+  'gpt-5': { write: 1.25, read: 0.125 },
+  'gpt-5-mini': { write: 0.25, read: 0.025 },
+  'gpt-5-nano': { write: 0.05, read: 0.005 },
 };
 
 /**
@@ -204,6 +210,12 @@ const getValueKey = (model, endpoint) => {
     return 'o1-mini';
   } else if (modelName.includes('o1')) {
     return 'o1';
+  } else if (modelName.includes('gpt-5-nano')) {
+    return 'gpt-5-nano';
+  } else if (modelName.includes('gpt-5-mini')) {
+    return 'gpt-5-mini';
+  } else if (modelName.includes('gpt-5')) {
+    return 'gpt-5';
   } else if (modelName.includes('gpt-4.5')) {
     return 'gpt-4.5';
   } else if (modelName.includes('gpt-4.1-nano')) {

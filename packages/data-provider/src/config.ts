@@ -868,6 +868,9 @@ export const alternateName = {
 };
 
 const sharedOpenAIModels = [
+  'gpt-5',
+  'gpt-5-mini',
+  'gpt-5-nano',
   'gpt-4o-mini',
   'gpt-4o',
   'gpt-4.5-preview',
@@ -1028,6 +1031,9 @@ export const visionModels = [
   'grok-vision',
   'grok-2-vision',
   'grok-3',
+  'gpt-5',
+  'gpt-5-mini',
+  'gpt-5-nano',
   'gpt-4o-mini',
   'gpt-4o',
   'gpt-4-turbo',
