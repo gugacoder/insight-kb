@@ -60,7 +60,7 @@ function AuthLayout({
     <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
       <Banner />
       <BlinkAnimation active={isFetching}>
-        <div className="mt-20 mb-6 h-40 w-full bg-cover">
+        <div className="mt-10 mb-0 h-40 w-full bg-cover">
           <img
             src="/assets/nic-insight-logo.svg"
             className="h-full w-full object-contain dark:hidden"
