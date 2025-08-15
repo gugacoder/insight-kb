@@ -223,4 +223,7 @@ Reason: [Why this score - what might fail?]
 
 ---
 
+**DO NOT OVERTHINK**
+**DO NOT OVERENGENEER**
+
 **BEGIN ANALYSIS** by requesting the application prompt for comprehensive decomposition and PRP generation.
