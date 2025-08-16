@@ -14,13 +14,17 @@ const connect = require('./connect');
   console.purple('Create a new user account!');
   console.purple('--------------------------');
 
-  if (process.argv.length < 5) {
-    console.orange('Usage: npm run create-user <email> <name> <username> [--email-verified=false]');
-    console.orange('Note: if you do not pass in the arguments, you will be prompted for them.');
-    console.orange(
-      'If you really need to pass in the password, you can do so as the 4th argument (not recommended for security).',
-    );
-    console.orange('Use --email-verified=false to set emailVerified to false. Default is true.');
+  if (process.argv.length < 6) {
+    console.orange('Usage: npm run create-user <email> <name> <username> <password> [--no-email]');
+    console.orange('Note: if you do not pass in all arguments, you will be prompted for missing ones.');
+    console.orange('');
+    console.orange('Flags:');
+    console.orange('  --no-email         Set emailVerified to false (user does not need to confirm email)');
+    console.orange('  --email-verified=false   Alternative way to set emailVerified to false');
+    console.orange('');
+    console.orange('Examples:');
+    console.orange('  npm run create-user user@example.com "John Doe" johndoe mypassword123');
+    console.orange('  npm run create-user user@example.com "John Doe" johndoe mypassword123 --no-email');
     console.purple('--------------------------');
   }
 
@@ -31,22 +35,26 @@ const connect = require('./connect');
   let emailVerified = true;
 
   // Parse command line arguments
-  for (let i = 2; i < process.argv.length; i++) {
-    if (process.argv[i].startsWith('--email-verified=')) {
-      emailVerified = process.argv[i].split('=')[1].toLowerCase() !== 'false';
-      continue;
-    }
+  const args = process.argv.slice(2);
+  const flags = args.filter(arg => arg.startsWith('--'));
+  const positionalArgs = args.filter(arg => !arg.startsWith('--'));
 
-    if (!email) {
-      email = process.argv[i];
-    } else if (!name) {
-      name = process.argv[i];
-    } else if (!username) {
-      username = process.argv[i];
-    } else if (!password) {
-      console.red('Warning: password passed in as argument, this is not secure!');
-      password = process.argv[i];
+  // Handle flags
+  for (const flag of flags) {
+    if (flag === '--no-email') {
+      emailVerified = false;
+    } else if (flag.startsWith('--email-verified=')) {
+      emailVerified = flag.split('=')[1].toLowerCase() !== 'false';
     }
+  }
+
+  // Handle positional arguments
+  if (positionalArgs.length >= 1) email = positionalArgs[0];
+  if (positionalArgs.length >= 2) name = positionalArgs[1];
+  if (positionalArgs.length >= 3) username = positionalArgs[2];
+  if (positionalArgs.length >= 4) {
+    console.orange('Note: password provided as argument (consider security implications)');
+    password = positionalArgs[3];
   }
 
   if (!email) {
@@ -78,8 +86,8 @@ const connect = require('./connect');
     }
   }
 
-  // Only prompt for emailVerified if it wasn't set via CLI
-  if (!process.argv.some((arg) => arg.startsWith('--email-verified='))) {
+  // Only prompt for emailVerified if it wasn't set via CLI flags
+  if (!flags.some((flag) => flag === '--no-email' || flag.startsWith('--email-verified='))) {
     const emailVerifiedInput = await askQuestion(`Email verified? (Y/n, default is Y):
 
 If \`y\`, the user's email will be considered verified.

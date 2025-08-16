@@ -229,7 +229,8 @@ const registerUser = async (user, additionalData = {}) => {
         email,
         name,
       });
-    } else {
+    } else if (!additionalData.hasOwnProperty('emailVerified') || additionalData.emailVerified) {
+      // Only set emailVerified to true if not explicitly set to false in additionalData
       await updateUser(newUserId, { emailVerified: true });
     }
 
