@@ -19,9 +19,9 @@ const openAIModels = {
   'gpt-4.1': 1047576,
   'gpt-4.1-mini': 1047576,
   'gpt-4.1-nano': 1047576,
-  'gpt-5': 271500, // -500 from max (272K input)
-  'gpt-5-mini': 271500, // -500 from max (272K input)  
-  'gpt-5-nano': 271500, // -500 from max (272K input)
+  'gpt-5': 399500, // -500 from max (400K input)
+  'gpt-5-mini': 399500, // -500 from max (400K input)  
+  'gpt-5-nano': 399500, // -500 from max (400K input)
   'gpt-4o': 127500, // -500 from max
   'gpt-4o-mini': 127500, // -500 from max
   'gpt-4o-2024-05-13': 127500, // -500 from max

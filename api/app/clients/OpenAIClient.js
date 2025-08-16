@@ -102,7 +102,9 @@ class OpenAIClient extends BaseClient {
     }
 
     const omniPattern = /\b(o\d)\b/i;
+    const gpt5Pattern = /\bgpt-[5-9]\b/i;
     this.isOmni = omniPattern.test(this.modelOptions.model);
+    this.isGpt5Plus = gpt5Pattern.test(this.modelOptions.model);
 
     const { OPENAI_FORCE_PROMPT } = process.env ?? {};
     const { reverseProxyUrl: reverseProxy } = this.options;
@@ -1221,7 +1223,7 @@ ${convo}
         opts.defaultHeaders = { ...opts.defaultHeaders, 'api-key': this.apiKey };
       }
 
-      if (this.isOmni === true && modelOptions.max_tokens != null) {
+      if ((this.isOmni === true || this.isGpt5Plus === true) && modelOptions.max_tokens != null) {
         modelOptions.max_completion_tokens = modelOptions.max_tokens;
         delete modelOptions.max_tokens;
       }
