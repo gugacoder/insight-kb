@@ -1,4 +1,4 @@
-# No Document Found for Query on Role
+# When no document found for query on role
 
 ## **ISSUE**
 
